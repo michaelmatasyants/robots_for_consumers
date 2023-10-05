@@ -1,6 +1,7 @@
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
+from django.utils.timezone import make_aware, datetime
 from .models import Robot
 from .forms import RobotCreationForm
 
@@ -15,7 +16,8 @@ def create_robot(request):
             'serial': f'{model}-{version}',
             'model': model,
             'version': version,
-            'created': data.get('created'),
+            'created': make_aware(datetime.strptime(data.get('created'),
+                                                    '%Y-%m-%d %H:%M:%S')),
         }
         robot_form = RobotCreationForm(robot_data)
         if robot_form.is_valid():
@@ -50,3 +52,4 @@ def get_all_robots(request):
     else:
         return JsonResponse({'error': 'Only GET requests are allowed'},
                             status=405)
+
