@@ -91,6 +91,3 @@ media/
 venv/
 migrations/
 tasks.md
-
-robots/urls.py
-robots/views.py
