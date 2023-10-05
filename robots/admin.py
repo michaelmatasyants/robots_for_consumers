@@ -3,4 +3,4 @@ from robots.models import Robot
 
 @admin.register(Robot)
 class RobotAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['serial', 'model', 'version', 'created']
