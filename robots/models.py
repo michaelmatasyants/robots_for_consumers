@@ -13,3 +13,6 @@ class Robot(models.Model):
                                null=False)
     created = models.DateTimeField(blank=False,
                                    null=False)
+
+    def __str__(self) -> str:
+        return f'{self.serial} {self.created}'

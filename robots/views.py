@@ -1,7 +1,10 @@
 import json
+from datetime import date, timedelta
+import pandas as pd
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
+from django.http import JsonResponse, FileResponse
 from django.utils.timezone import make_aware, datetime
+from django.db.models import Count
 from .models import Robot
 from .forms import RobotCreationForm
 
@@ -53,3 +56,24 @@ def get_all_robots(request):
         return JsonResponse({'error': 'Only GET requests are allowed'},
                             status=405)
 
+
+def get_production_report(request):
+    end_period = date.today()
+    start_period = end_period - timedelta(days=6)
+    distinct_models = Robot.objects.filter(created__gte=start_period)  \
+                           .values_list('model', flat=True).distinct()  \
+                           .order_by('model')
+    report_name = 'Отчет по производству роботов за последнюю неделю.xlsx'
+    with pd.ExcelWriter(report_name) as excel_writer:
+        for model in distinct_models:
+            robots_by_model = Robot.objects  \
+                .filter(created__gte=start_period, model=model)  \
+                .values('model', 'version')  \
+                .annotate(produced_robots_qty=Count('serial'))
+            df = pd.DataFrame(list(robots_by_model))
+            df.columns = ['Модель', 'Версия', 'Количество за неделю']
+            df.to_excel(excel_writer,
+                        engine='xlsxwriter',
+                        sheet_name=model,
+                        index=False)
+    return FileResponse(open(report_name, 'rb'))
