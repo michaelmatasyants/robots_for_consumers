@@ -3,4 +3,4 @@ from orders.models import Order
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['customer', 'robot_serial']

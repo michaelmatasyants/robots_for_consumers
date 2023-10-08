@@ -58,6 +58,8 @@ def get_all_robots(request):
 
 
 def get_production_report(request):
+    '''Generates a report in Excel on the robots produced during
+    the last week'''
     end_period = date.today()
     start_period = end_period - timedelta(days=6)
     distinct_models = Robot.objects.filter(created__gte=start_period)  \
