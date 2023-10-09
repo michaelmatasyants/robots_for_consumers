@@ -90,5 +90,4 @@ db.sqlite3
 media/
 venv/
 migrations/
-tasks.md
 Отчет по производству роботов за последнюю неделю.xlsx
